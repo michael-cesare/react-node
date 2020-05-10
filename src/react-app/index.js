@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Form from "./js/components/Form";
+import Form from "./components/Form";
 import logger from '../util/logger';
 
 const bootstrapApp = (renderMethod) => {
