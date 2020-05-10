@@ -1,0 +1,16 @@
+
+React Webpack Babel - setup:
+https://www.valentinog.com/blog/babel/
+
+react-router:
+https://alligator.io/react/react-router-ssr/
+
+Code splitting/Lazy Load:
+https://hackernoon.com/lessons-learned-code-splitting-with-webpack-and-react-f012a989113
+
+Loadable components - SSR:
+https://loadable-components.com/docs/server-side-rendering/
+
+Node Express (Inversion of Control) example:
+https://softwareontheroad.com/ideal-nodejs-project-structure/
+

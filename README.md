@@ -3,6 +3,5 @@ An Example of integrating React with Node using features of react, react-router,
 
 purpose of this repository is to deal with issues that where faced during my past work experienced, And knowlagde to the public.
 
-Read more on specific areas/Library:
-https://loadable-components.com/docs/server-side-rendering/
-https://softwareontheroad.com/ideal-nodejs-project-structure/
+
+Read more on specific areas/Library by visiting links from reference.txt
