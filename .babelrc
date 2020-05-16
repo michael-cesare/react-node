@@ -31,9 +31,6 @@
     "development": {
       "plugins": ["react-hot-loader/babel"],
     },
-    "production": {
-      "plugins": ["react-hot-loader/babel"],
-    },
   },
   // "ignore": [
   //   "node_modules",
