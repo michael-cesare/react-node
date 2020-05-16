@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Form from "./components/Form";
+
+import App from "./App";
 import logger from '../util/logger';
 
 const bootstrapApp = (renderMethod) => {
   logger.hit('[index] - bootstrapApp');
   const wrapper = document.getElementById("container");
+
   if (wrapper) {
-    renderMethod(<Form />, wrapper);
+    renderMethod(<App />, wrapper);
   }
 };
 

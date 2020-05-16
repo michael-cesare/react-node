@@ -1,5 +1,6 @@
 import { createLogger, transports, format } from 'winston';
 
+import envReader from '../envReader';
 import { getTime, getDay, isEmpty } from './core';
 
 const windowDefined = typeof window !== 'undefined' && window && window !== undefined && !isEmpty(window);
@@ -69,7 +70,7 @@ class SSRLogger {
   }
 
   initLogger = () => {
-    const logLevel = reactConfigs.LOG_LEVEL;
+    const logLevel = envReader.LOG_LEVEL;
     // SSR react/node - log to winston
     const fileName = `errorLogs/${getDay()}.log`;
     const transportConfig = [

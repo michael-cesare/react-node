@@ -12,15 +12,8 @@
           "node": "current",
           "esmodules": true,
           "browsers": "> 1%",
-          // "android": "61",
           "chrome": "58",
-          // "edge": "16",
-          // "firefox": "60",
           "ie": "11",
-          // "ios": "10.3",
-          // "opera": "48",
-          // "safari": "10.1",
-          // "samsung": "8.2",
         },
       },
     ],
@@ -34,4 +27,16 @@
     "@babel/transform-runtime",
     "@babel/transform-modules-commonjs",
   ],
+  "env": {
+    "development": {
+      "plugins": ["react-hot-loader/babel"],
+    },
+    "production": {
+      "plugins": ["react-hot-loader/babel"],
+    },
+  },
+  // "ignore": [
+  //   "node_modules",
+  //   "build"
+  // ]
 }
