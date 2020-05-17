@@ -97,7 +97,7 @@ const nodeRules = [
     ]
   },
   {
-    test: /\.(js|jsx)$/,
+    test: /\.(js|jsx|ts|tsx)$/,
     // we do not want anything from node_modules to be compiled
     exclude: /node_modules/,
     use: {
@@ -139,7 +139,7 @@ const nodeRules = [
 
 const webRules = [
   {
-    test: /\.(js|jsx|file)$/,
+    test: /\.(js|jsx|file|ts|tsx))$/,
     // we do not want anything from node_modules to be compiled
     exclude: /(node_modules)/,
     use: {

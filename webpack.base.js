@@ -199,9 +199,9 @@ const webpackConfigs = (mode, target, env) => ({
     // alias: {
     //   'react-dom': '@hot-loader/react-dom',
     // },
-    extensions: [".ts", ".tsx"]
+    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
   } : {
-    extensions: [".ts", ".tsx"]
+    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
   },
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
   optimization: getOptimization(target, env),
