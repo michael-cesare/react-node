@@ -5,7 +5,7 @@ import open from 'open';
 import envReader from '../envReader';
 import errorHandler from './middleware/errorHandler';
 import ping from './controllerRoutes/pingRoute';
-import homeRoute from './controllerRoutes/homeRoute';
+import mainRouter from './controllerRoutes/mainRouter';
 import logger from '../util/logger';
 
 const host = envReader.SITE_HOST;
@@ -18,7 +18,7 @@ app.use('/client', express.static('build/client'));
 app.use('/build', express.static('build'));
 
 app.use(ping);
-app.use(homeRoute);
+app.use(mainRouter);
 // ---- errorHandler for 404 ----
 app.use((err: any, req: any, res: any, next: any) => {
     errorHandler(err, req, res);

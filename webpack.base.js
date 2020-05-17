@@ -8,6 +8,12 @@ const nodeExternals = require('webpack-node-externals');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
 const { loaderRules } = require('./loaderRules');
+const {
+  APP_ENV, SITE_HOST, SITE_PORT,
+  LOG_LEVEL, API_BASE_URL, BASE_URL,
+  SERVER,
+} = require('./envReader');
+
 
 const rootDir = path.join(__dirname, './');
 const pathAlias = {
@@ -78,21 +84,29 @@ const devPlugins = env => (env === 'development' ? [
   new webpack.NoEmitOnErrorsPlugin(),
 ] : []);
 
+const varDefinePlugin = new webpack.DefinePlugin({
+  APP_ENV: JSON.stringify(APP_ENV),
+  SITE_HOST: JSON.stringify(SITE_HOST),
+  SITE_PORT: JSON.stringify(SITE_PORT),
+  LOG_LEVEL: JSON.stringify(LOG_LEVEL),
+  API_BASE_URL: JSON.stringify(API_BASE_URL),
+  BASE_URL: JSON.stringify(BASE_URL),
+  SERVER: JSON.stringify(SERVER),
+});
+
 const nodePlugins = env => [
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   new webpack.ProvidePlugin({
     "React": "react",
   }),
+  varDefinePlugin,
   // new LoadablePlugin(),
 ];
 
 const webPlugins = env => [
   new webpack.optimize.OccurrenceOrderPlugin(),
   ...devPlugins(env),
-  new webpack.DefinePlugin({
-    'process.env.APP_ENV': JSON.stringify(env),
-    APP_ENV: JSON.stringify(env),
-  }),
+  varDefinePlugin,
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   env === 'development' ? new CrudeTimingPlugin() : () => {},
   // new LoadablePlugin(),

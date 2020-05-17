@@ -16,7 +16,7 @@ const pingRoute = async (req: any, res: any, next: any) => {
   });
 
   const pingMsg = 'hello Node developer! Message from Ping';
-  const rtn = renderHtmlApp(pingMsg);
+  const rtn = renderHtmlApp(pingMsg, {});
 
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write(rtn);

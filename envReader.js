@@ -16,6 +16,9 @@ const mode = (APP_ENV === 'development') ? 'development' : 'production';
 module.exports = {
     APP_ENV,
     mode,
+    SERVER: process.env.SERVER,
+    API_BASE_URL: process.env.API_BASE_URL,
+    BASE_URL: process.env.BASE_URL,
     SITE_HOST: process.env.SITE_HOST,
     SITE_PORT: process.env.SITE_PORT,
     LOG_LEVEL: isEmpty(process.env.LOG_LEVEL) ? 'debug' : process.env.LOG_LEVEL,
