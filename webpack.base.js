@@ -7,7 +7,13 @@ const nodeExternals = require('webpack-node-externals');
 // const LoadablePlugin = require('@loadable/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
-const { loaderRules } = require('./loaderRules.js');
+const { loaderRules } = require('./loaderRules');
+const {
+  APP_ENV, SITE_HOST, SITE_PORT,
+  LOG_LEVEL, API_BASE_URL, BASE_URL,
+  SERVER,
+} = require('./envReader');
+
 
 const rootDir = path.join(__dirname, './');
 const pathAlias = {
@@ -16,8 +22,8 @@ const pathAlias = {
   buildDir: path.join(rootDir, 'build'),
 };
 
-const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.js')] };
-const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.js')] };
+const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.tsx')] };
+const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.tsx')] };
 
 const terserMinify = env => new TerserPlugin({
   cache: true,
@@ -78,21 +84,29 @@ const devPlugins = env => (env === 'development' ? [
   new webpack.NoEmitOnErrorsPlugin(),
 ] : []);
 
+const varDefinePlugin = new webpack.DefinePlugin({
+  APP_ENV: JSON.stringify(APP_ENV),
+  SITE_HOST: JSON.stringify(SITE_HOST),
+  SITE_PORT: JSON.stringify(SITE_PORT),
+  LOG_LEVEL: JSON.stringify(LOG_LEVEL),
+  API_BASE_URL: JSON.stringify(API_BASE_URL),
+  BASE_URL: JSON.stringify(BASE_URL),
+  SERVER: JSON.stringify(SERVER),
+});
+
 const nodePlugins = env => [
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   new webpack.ProvidePlugin({
     "React": "react",
   }),
+  varDefinePlugin,
   // new LoadablePlugin(),
 ];
 
 const webPlugins = env => [
   new webpack.optimize.OccurrenceOrderPlugin(),
   ...devPlugins(env),
-  new webpack.DefinePlugin({
-    'process.env.APP_ENV': JSON.stringify(env),
-    APP_ENV: JSON.stringify(env),
-  }),
+  varDefinePlugin,
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   env === 'development' ? new CrudeTimingPlugin() : () => {},
   // new LoadablePlugin(),
@@ -180,7 +194,10 @@ const webpackConfigs = (mode, target, env) => ({
         /^lodash.debounce$/,
       ],
     }),
-  ] : undefined,
+  ] : {
+    // react: "React",
+    // "react-dom": "ReactDOM"
+  },
   module: {
     rules: loaderRules(target, env),
   },
@@ -196,7 +213,10 @@ const webpackConfigs = (mode, target, env) => ({
     // alias: {
     //   'react-dom': '@hot-loader/react-dom',
     // },
-  } : {},
+    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
+  } : {
+    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
+  },
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
   optimization: getOptimization(target, env),
 });

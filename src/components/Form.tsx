@@ -1,15 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Form extends Component {
-  constructor() {
-    super();
+class Form extends React.Component {
+  state = {
+    value: "",
+  };
 
-    this.state = {
-      value: ""
-    };
-  }
-
-  _handleChange = (event) => {
+  _handleChange = (event: any) => {
     const { value } = event.target;
     this.setState(() => {
       return {
@@ -28,7 +24,6 @@ class Form extends Component {
           value={value}
           onChange={this._handleChange}
         />
-        test
       </form>
     );
   }
