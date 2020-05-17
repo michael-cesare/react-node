@@ -88,6 +88,15 @@ const mediaLoader = [
 
 const nodeRules = [
   {
+    test: /\.ts(x?)$/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: "ts-loader"
+      }
+    ]
+  },
+  {
     test: /\.(js|jsx)$/,
     // we do not want anything from node_modules to be compiled
     exclude: /node_modules/,

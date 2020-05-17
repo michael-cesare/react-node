@@ -29,6 +29,7 @@ module.exports = api => {
         },
       ],
       "@babel/react",
+      "@babel/typescript",
     ],
     "plugins": [
       ["@babel/plugin-proposal-decorators", { "legacy": true }],

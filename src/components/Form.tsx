@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 
 class Form extends Component {
-  constructor() {
-    super();
+  constructor(props: any) {
+    super(props);
 
     this.state = {
       value: ""
     };
   }
 
-  _handleChange = (event) => {
+  _handleChange = (event: any) => {
     const { value } = event.target;
     this.setState(() => {
       return {

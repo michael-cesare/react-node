@@ -180,7 +180,10 @@ const webpackConfigs = (mode, target, env) => ({
         /^lodash.debounce$/,
       ],
     }),
-  ] : undefined,
+  ] : {
+    react: "React",
+    "react-dom": "ReactDOM"
+  },
   module: {
     rules: loaderRules(target, env),
   },
@@ -196,7 +199,10 @@ const webpackConfigs = (mode, target, env) => ({
     // alias: {
     //   'react-dom': '@hot-loader/react-dom',
     // },
-  } : {},
+    extensions: [".ts", ".tsx"]
+  } : {
+    extensions: [".ts", ".tsx"]
+  },
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
   optimization: getOptimization(target, env),
 });
