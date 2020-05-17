@@ -42,7 +42,7 @@ module.exports = api => {
     ],
     "env": {
       "development": {
-        "plugins": ["react-hot-loader/babel"],
+        // "plugins": ["react-hot-loader/babel"],
       },
     },
     // "ignore": [

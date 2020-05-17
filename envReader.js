@@ -1,7 +1,7 @@
 const fs = require('fs');
 const dotenv = require('dotenv');
 
-const { isEmpty } = require('./util/core');
+const isEmpty = (val) => (!!((typeof val === 'undefined' || val === undefined || val == null || val === 'undefined' || val === '')));
 
 const APP_ENV = process.env && process.env.APP_ENV ? process.env.APP_ENV : 'development';
 const envConfig = dotenv.parse(fs.readFileSync('.env'));

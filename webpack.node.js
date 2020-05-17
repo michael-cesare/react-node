@@ -1,7 +1,7 @@
-require('@babel/register');
+// require('@babel/register');
 
 const envReader = require('./envReader');
-const { webpackConfigs } = require('./webpack.base.js');
+const { webpackConfigs } = require('./webpack.base');
 
 const { mode, APP_ENV } = envReader;
 const target = 'node';

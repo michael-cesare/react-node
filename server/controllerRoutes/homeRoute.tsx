@@ -1,11 +1,11 @@
 import express from 'express';
+import React from "react";
 import { renderToString } from 'react-dom/server';
 import path from 'path';
 // import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 
-import asyncMiddleware from '../middleware/asyncMiddleware.js';
+import asyncMiddleware from '../middleware/asyncMiddleware';
 import App from '../../src/App';
-import logger from '../../util/logger';
 
 const homeRouter = express.Router();
 const apiTimeout = 5 * 100000;
@@ -13,7 +13,7 @@ const apiTimeout = 5 * 100000;
 // const nodeStats = path.resolve('build/server/loadable-stats.json');
 // const reactStats = path.resolve('build/client/loadable-stats.json');
 
-const renderLazyApp = (htmlDom, webExtractor) => {
+const renderLazyApp = (htmlDom: string, webExtractor: any) => {
   return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -29,7 +29,7 @@ const renderLazyApp = (htmlDom, webExtractor) => {
     </html>`;
 }
 
-const renderHtmlApp = (htmlDom) => {
+const renderHtmlApp = (htmlDom: any) => {
   return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -42,9 +42,9 @@ const renderHtmlApp = (htmlDom) => {
     </html>`;
 }
 
-const homeRoute = async (req, res, next) => {
+const homeRoute = async (req: any, res: any, next: any) => {
   req.setTimeout(apiTimeout, () => {
-    const err = new Error('Request Timeout');
+    const err: any = new Error('Request Timeout');
     err.status = 408;
     next(err);
   });
@@ -57,7 +57,7 @@ const homeRoute = async (req, res, next) => {
   // const htmlDom = renderToString(jsxApp);
   // const rtn = renderLazyApp(htmlDom, webExtractor);
 
-  const jsxApp = <App />;
+  const jsxApp: any = <App />;
   const htmlDom = renderToString(jsxApp);
   const rtn = renderHtmlApp(htmlDom);
 

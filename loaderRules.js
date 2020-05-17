@@ -88,21 +88,16 @@ const mediaLoader = [
 
 const nodeRules = [
   {
-    test: /\.ts(x?)$/,
+    test: /\.(j|t)sx?$/,
     exclude: /node_modules/,
     use: [
       {
+        loader: 'babel-loader',
+      },
+      {
         loader: "ts-loader"
-      }
-    ]
-  },
-  {
-    test: /\.(js|jsx|ts|tsx)$/,
-    // we do not want anything from node_modules to be compiled
-    exclude: /node_modules/,
-    use: {
-      loader: 'babel-loader',
-    },
+      },
+    ],
   },
   { ...cssLoader.ssr },
   {
@@ -139,12 +134,19 @@ const nodeRules = [
 
 const webRules = [
   {
-    test: /\.(js|jsx|file|ts|tsx))$/,
-    // we do not want anything from node_modules to be compiled
-    exclude: /(node_modules)/,
-    use: {
-      loader: 'babel-loader',
-    },
+    test: /\.(j|t)sx?$/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: 'react-hot-loader/webpack',
+      },
+      {
+        loader: 'babel-loader',
+      },
+      {
+        loader: "ts-loader"
+      },
+    ],
   },
   { ...cssLoader.nodeModules },
   { ...cssLoader.csr },

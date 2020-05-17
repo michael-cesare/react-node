@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import logger from '../util/logger';
 
-const bootstrapApp = (renderMethod) => {
+const bootstrapApp = (renderMethod: any) => {
   logger.hit('[index] - bootstrapApp');
   const wrapper = document.getElementById('container');
 

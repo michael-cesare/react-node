@@ -7,7 +7,7 @@ const nodeExternals = require('webpack-node-externals');
 // const LoadablePlugin = require('@loadable/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
-const { loaderRules } = require('./loaderRules.js');
+const { loaderRules } = require('./loaderRules');
 
 const rootDir = path.join(__dirname, './');
 const pathAlias = {
@@ -16,8 +16,8 @@ const pathAlias = {
   buildDir: path.join(rootDir, 'build'),
 };
 
-const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.js')] };
-const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.js')] };
+const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.tsx')] };
+const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.tsx')] };
 
 const terserMinify = env => new TerserPlugin({
   cache: true,
@@ -181,8 +181,8 @@ const webpackConfigs = (mode, target, env) => ({
       ],
     }),
   ] : {
-    react: "React",
-    "react-dom": "ReactDOM"
+    // react: "React",
+    // "react-dom": "ReactDOM"
   },
   module: {
     rules: loaderRules(target, env),

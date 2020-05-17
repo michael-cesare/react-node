@@ -17,7 +17,9 @@ class NoLogger {
     }
   }
 
-  initLogger = () => this;
+  initLogger = () => {
+    return this
+  };
 
   hit = (msg) => {
   }
@@ -41,7 +43,9 @@ class CSRLogger {
     }
   }
 
-  initLogger = () => console;
+  initLogger = () => {
+    return console;
+  }
 
   hit = (msg) => {
     instance.debug(`[HIT]${msg}`);
@@ -76,12 +80,9 @@ class SSRLogger {
     const transportConfig = [
       new transports.Console({
         level: logLevel,
-        localTime: true,
       }),
       new transports.File({
-        name: 'error-file',
         filename: fileName,
-        localTime: true,
         level: logLevel,
       }),
     ];

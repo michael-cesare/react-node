@@ -2,9 +2,11 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "./built/",
+    "allowJs": true,
+    "checkJs": false,
     "sourceMap": true,
-    "strict": true,
-    "noImplicitAny": true,
+    "strict": false,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
@@ -14,6 +16,14 @@
     "jsx": "react",
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src"],
-  "exclude": ["node_modues"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js"
+  ],
+  "exclude": [
+    "build",
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

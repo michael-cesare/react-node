@@ -8,3 +8,4 @@ package-lock.json
 build/*
 debug.log
 errorLogs/*
+*.log

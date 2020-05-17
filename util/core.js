@@ -1,4 +1,4 @@
-const isEmpty = val => (!!((typeof val === 'undefined' || val === undefined || val == null || val === 'undefined' || val === '')));
+const isEmpty = (val) => (!!((typeof val === 'undefined' || val === undefined || val == null || val === 'undefined' || val === '')));
 
 const isNodejs = () => {
   const processDefined = typeof process !== 'undefined' && process && process.versions && process.versions.node;

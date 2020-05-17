@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from "react";
 // import loadable from '@loadable/component';
 
 import Form from './components/Form';
@@ -6,13 +6,10 @@ import Form from './components/Form';
 
 // https://github.com/alexnm/react-ssr/blob/master/src/components/Layout.js
 
-class App extends Component {
-    constructor() {
-        super();
-        this.state = {
-            title: "Welcome to React SSR!",
-        };
-    }
+class App extends React.Component {
+    state = {
+        title: "Welcome to React SSR!",
+    };
 
     render() {
         const { title } = this.state;
