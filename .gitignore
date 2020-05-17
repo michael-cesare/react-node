@@ -1,8 +1,10 @@
 node_modules
-dist
+build
 package-lock.json
 .history/*
 .history
 .vscode/*
 .vscode
 build/*
+debug.log
+errorLogs/*

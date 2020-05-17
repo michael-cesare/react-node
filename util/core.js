@@ -1,5 +1,3 @@
-// const { Iterable } = require('immutable');
-
 const isEmpty = val => (!!((typeof val === 'undefined' || val === undefined || val == null || val === 'undefined' || val === '')));
 
 const isNodejs = () => {
@@ -92,26 +90,19 @@ const countProperties = (obj) => {
 /**
  * get the size of a JS object, or immutable keys/values/entries.
  * method is able to get keySeq size of immutable
- * note: Immuttable are heavry for performance, use wisely.
+ * note: Immuttable are heavy for performance, use wisely.
  * @param {object|string|array} obj a JS object of any type
  * @return {number} 0 for empty object, -1 when something went wrong, else the count of obj
  */
 const sizeOf = (obj) => {
   let count = 0;
   if (!isEmpty(obj)) {
-    if (obj.get && obj.toJS && obj.keySeq) { // best for performance
+    if (obj.get && obj.toJS && obj.keySeq) {
       const immutableKeys = obj.keySeq();
       const kArray = immutableKeys && immutableKeys.toArray ? immutableKeys.toArray() : null;
       count = kArray && kArray.length ? kArray.length : -1;
-    // } else if (obj.get && obj.toJS && obj.valueSeq) {
-    //   const immutableV = obj.valueSeq();
-    //   count = immutableV && immutableV.length ? immutableV.length : -1;
-    // } else if (obj.get && obj.toJS && obj.entrySeq) {
-    //   const immutableE = obj.entrySeq();
-    //   count = immutableE && immutableE.length ? immutableE.length : -1;
     } else if (obj.size && obj !== {}) {
-      // the size prop of an immutable is not the size of list/map, but of the Immuttable.
-      count = obj.size; // when you need to check the size: if (Iterable.isIterable(obj)) { sizeOf(xxx.toJS()) }
+      count = obj.size;
     } else if (obj.length) {
       count = obj.length;
     } else {
