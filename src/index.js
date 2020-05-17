@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// import { loadableReady } from '@loadable/component';
 
 import App from './App';
 import logger from '../util/logger';
@@ -13,4 +14,5 @@ const bootstrapApp = (renderMethod) => {
   }
 };
 
-bootstrapApp(ReactDOM.render);
+bootstrapApp(ReactDOM.hydrate);
+// loadableReady(() => bootstrapApp(ReactDOM.hydrate));

@@ -2,7 +2,9 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
+// const LoadablePlugin = require('@loadable/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
 const { loaderRules } = require('./loaderRules.js');
@@ -14,8 +16,44 @@ const pathAlias = {
   buildDir: path.join(rootDir, 'build'),
 };
 
-const webEntry = { reactApp: [path.join(pathAlias.srcClientDir , 'index.js')] };
-const nodeEntry = { nodeApp: [path.join(pathAlias.srcServerDir , 'index.js')] };
+const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.js')] };
+const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.js')] };
+
+const terserMinify = env => new TerserPlugin({
+  cache: true,
+  parallel: 4,
+  sourceMap: env === 'development' ? 'cheap-eval-source-map' : 'eval', // false, none, eval, cheap-eval-source-map, cheap-module-eval-source-map, eval-source-map , inline-cheap-source-map
+  // test: /\.js(\?.*)?$/i,
+  test: /^(?!.*(venders).*)\.js(\?.*)?$/i,
+  output: {
+    comments: false,
+  },
+  terserOptions: {
+    parse: {
+      ecma: 8,
+    },
+    compress: {
+      ecma: 5,
+      warnings: false,
+      comparisons: false,
+      inline: 2,
+      passes: 3,
+    },
+    module: false,
+    mangle: {
+      safari10: true,
+      ie8: true,
+    },
+    output: {
+      beautify: true,
+      ecma: 5,
+      comments: false,
+      ascii_only: true,
+    },
+    toplevel: false,
+    keep_fnames: false,
+  },
+});
 
 const getOutput = target => ({
   path: target === 'node' ? path.join(pathAlias.buildDir, 'server') : path.join(pathAlias.buildDir, 'client'),
@@ -31,22 +69,33 @@ const HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 
 const MiniCssExtractPluginConfig = new MiniCssExtractPlugin({
-  filename: 'css/[name]_[hash:base64].css',
-  chunkFilename: 'css/[name]_[hash:base64].css',
+  filename: 'css/[name]_[hash].css',
+  chunkFilename: 'css/[name]_[hash].css',
 });
+
+const devPlugins = env => (env === 'development' ? [
+  new webpack.HotModuleReplacementPlugin(),
+  new webpack.NoEmitOnErrorsPlugin(),
+] : []);
 
 const nodePlugins = env => [
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
+  new webpack.ProvidePlugin({
+    "React": "react",
+  }),
+  // new LoadablePlugin(),
 ];
 
 const webPlugins = env => [
   new webpack.optimize.OccurrenceOrderPlugin(),
+  ...devPlugins(env),
   new webpack.DefinePlugin({
     'process.env.APP_ENV': JSON.stringify(env),
     APP_ENV: JSON.stringify(env),
   }),
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   env === 'development' ? new CrudeTimingPlugin() : () => {},
+  // new LoadablePlugin(),
   HTMLWebpackPluginConfig,
   MiniCssExtractPluginConfig,
 ];
@@ -97,13 +146,18 @@ const getOptimization = (target, env) => (
   env === 'development'
     ? {
       splitChunks: getSplitChunks(target),
-      // minimizer: [terserMinify], // uncomment only to TEST
+      minimizer: [terserMinify], // uncomment only to TEST default by webpack. however terser seems faster
+      usedExports: true,
       minimize: false,
-      nodeEnv: env,
+      namedModules: true, // default for mode development and disable for mode production
+      nodeEnv: 'development',
     }
     : {
       splitChunks: getSplitChunks(target),
       minimizer: [terserMinify],
+      usedExports: true,
+      minimize: true,
+      namedModules: false,
       nodeEnv: 'production',
     }
 );
@@ -113,29 +167,36 @@ const webpackConfigs = (mode, target, env) => ({
   output: getOutput(target),
   target,
   mode,
-  // externals: target === 'node' ? [nodeExternals({
-  //   whitelist: ['react', 'react-dom', /^lodash/] // 'webpack/hot/dev-server', 
-  // })] : undefined,
+  externals: target === 'node' ? [
+    // when the below is removed, it will break because in  .\server\viewTemplates\layoutSSR.js  it has import of layout component
+    nodeExternals({
+      whitelist: [
+        // /^@loadable\/component$/,
+        /^react$/,
+        /^react-dom$/,
+        /^core-js$/,
+        /^commonjs$/,
+        /^lodash$/,
+        /^lodash.debounce$/,
+      ],
+    }),
+  ] : undefined,
   module: {
     rules: loaderRules(target, env),
   },
-  node: {
+  node: target === 'web' ? {
     fs: 'empty', // dont use fs on browser.. use only by node.
-  },
-  ...target === 'web' ? {
-    node: {
-      fs: 'empty', // dont use fs on browser.. use only by node.
-    },
-    resolve: {
-      modules: [
-        'node_modules',
-      ],
-      // alias: {
-      //   'react-dom': '@hot-loader/react-dom',
-      // },
-    },
-    devtool: env === 'development' ? 'inline-source-map' : false,
-  } : [],
+  } : {},
+  devtool: env === 'development' ? 'cheap-source-map' : 'eval',  // 'cheap-source-map', 'eval', 'eval-source-map'
+  resolve: target === 'web' ? {
+    modules: [
+      path.resolve(pathAlias.srcClientDir),
+      'node_modules',
+    ],
+    // alias: {
+    //   'react-dom': '@hot-loader/react-dom',
+    // },
+  } : {},
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
   optimization: getOptimization(target, env),
 });
