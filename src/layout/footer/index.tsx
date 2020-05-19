@@ -1,13 +1,25 @@
-import React from "react";
+import React, { FC } from "react";
+import Typography from '@material-ui/core/Typography'
+import styled from "styled-components";
 
-class Footer extends React.Component {
-  render() {
-    return (
+const FooterContainer = styled.div`
+  width:100%;
+  background-color: grey;
+  display:block;
+  color: white;
+  padding: 0;
+`;
+
+const Footer: FC<any> = ({ ...otherProps }) => {
+  return (
+    <FooterContainer>
       <footer>
-        footer
+        <Typography>
+          {`© ${new Date().getFullYear()} Copyright: github.com! All Rights Reserved`}
+        </Typography>
       </footer>
-    );
-  }
+    </FooterContainer>
+  );
 }
 
 export default Footer;

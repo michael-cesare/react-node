@@ -13,9 +13,12 @@ const port = envReader.SITE_PORT;
 
 const app = express();
 
-app.use(express.static('build/server'));
+app.use('/favicon.ico', express.static('build/static/favicon.ico'));
+app.use('/static', express.static('build/static'));
 app.use('/client', express.static('build/client'));
+app.use('/src', express.static('build/client'));
 app.use('/build', express.static('build'));
+app.use(express.static('build/server'));
 
 app.use(ping);
 app.use(mainRouter);

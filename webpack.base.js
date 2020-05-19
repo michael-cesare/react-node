@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-// const LoadablePlugin = require('@loadable/webpack-plugin');
+const LoadablePlugin = require('@loadable/webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
 const { loaderRules } = require('./loaderRules');
@@ -20,6 +21,7 @@ const pathAlias = {
   srcClientDir: path.join(rootDir, 'src'),
   srcServerDir: path.join(rootDir, 'server'),
   buildDir: path.join(rootDir, 'build'),
+  staticDir: path.join(rootDir, 'src', 'static'),
 };
 
 const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.tsx')] };
@@ -63,7 +65,7 @@ const terserMinify = env => new TerserPlugin({
 
 const getOutput = target => ({
   path: target === 'node' ? path.join(pathAlias.buildDir, 'server') : path.join(pathAlias.buildDir, 'client'),
-  publicPath: target === 'node' ? path.join(pathAlias.buildDir, 'server') : path.join('src'), // used by webpackdevserver or express
+  publicPath: target === 'node' ? path.join(pathAlias.buildDir, 'server') : '/client/', // used by webpackdevserver or express
   filename: '[name].js',
   chunkFilename: 'js/[name]-[hash].js',
 });
@@ -96,22 +98,26 @@ const varDefinePlugin = new webpack.DefinePlugin({
 
 const nodePlugins = env => [
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
-  new webpack.ProvidePlugin({
-    "React": "react",
-  }),
   varDefinePlugin,
-  // new LoadablePlugin(),
+  new LoadablePlugin(),
 ];
 
 const webPlugins = env => [
   new webpack.optimize.OccurrenceOrderPlugin(),
   ...devPlugins(env),
   varDefinePlugin,
+  new LoadablePlugin(),
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   env === 'development' ? new CrudeTimingPlugin() : () => {},
-  // new LoadablePlugin(),
   HTMLWebpackPluginConfig,
   MiniCssExtractPluginConfig,
+  new CopyWebpackPlugin({
+    patterns: [
+    {
+      from: pathAlias.staticDir,
+      to: path.join(pathAlias.buildDir, 'static'),
+    },
+  ]}),
 ];
 
 const chuckName = (module, prefix) => {
@@ -134,7 +140,7 @@ const getSplitChunks = target => ({
     // No need for node_modules vendor chunk on the server-side
     ...target !== 'node' && {
       vendor: {
-        test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+        test: /[\\/]node_modules[\\/]/,
         priority: -10,
         name: module => chuckName(module, 'vender'),
         chunks: 'all',
@@ -182,16 +188,15 @@ const webpackConfigs = (mode, target, env) => ({
   target,
   mode,
   externals: target === 'node' ? [
-    // when the below is removed, it will break because in  .\server\viewTemplates\layoutSSR.js  it has import of layout component
     nodeExternals({
       whitelist: [
         // /^@loadable\/component$/,
-        /^react$/,
-        /^react-dom$/,
-        /^core-js$/,
-        /^commonjs$/,
-        /^lodash$/,
-        /^lodash.debounce$/,
+        // /^react$/,
+        // /^react-dom$/,
+        // /^core-js$/,
+        // /^commonjs$/,
+        // /^lodash$/,
+        // /^lodash.debounce$/,
       ],
     }),
   ] : {
@@ -205,16 +210,14 @@ const webpackConfigs = (mode, target, env) => ({
     fs: 'empty', // dont use fs on browser.. use only by node.
   } : {},
   devtool: env === 'development' ? 'cheap-source-map' : 'eval',  // 'cheap-source-map', 'eval', 'eval-source-map'
-  resolve: target === 'web' ? {
-    modules: [
+  resolve: {
+    modules: target === 'web' ? [
       path.resolve(pathAlias.srcClientDir),
       'node_modules',
-    ],
+    ] : [],
     // alias: {
     //   'react-dom': '@hot-loader/react-dom',
     // },
-    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
-  } : {
     extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
   },
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
