@@ -6,7 +6,7 @@ import loadable from '@loadable/component';
 
 import routes from '../routes';
 // import NotFoundPage from '../../views/NotFoundPage';
-const NotFoundPage = loadable(() => import('../../views/NotFoundPage' /* webpackChunkName: 'NotFoundPage' */));
+const NotFoundPage = loadable(() => import('../../views/notFoundPage' /* webpackChunkName: 'NotFoundPage' */));
 
 const BodyContainer = styled.div`
   width: '100%';
