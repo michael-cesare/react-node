@@ -1,15 +1,16 @@
+import "core-js/stable";
+import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-// import { loadableReady } from '@loadable/component';
+import { loadableReady } from '@loadable/component';
 import configureStore from '../redux/configureStore';
 import ApiClient from '../util/ApiClient';
 
 import App from './App';
 import logger from '../util/logger';
-// import { API_BASE_URL, BASE_URL } from '../typings';
 
 const client = new ApiClient(API_BASE_URL);
 
@@ -36,5 +37,5 @@ const bootstrapApp = (renderMethod: any) => {
   }
 };
 
-bootstrapApp(ReactDOM.hydrate);
-// loadableReady(() => bootstrapApp(ReactDOM.hydrate));
+// bootstrapApp(ReactDOM.hydrate);
+loadableReady(() => bootstrapApp(ReactDOM.hydrate));

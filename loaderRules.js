@@ -9,43 +9,89 @@ const pathAlias = {
   nodeModules: path.join(rootDir, 'node_modules'),
 };
 
-const cssLoader = {
-  nodeModules: { // load styles from node module, such as react-slick
+const cssLoaderClient = env => [
+  {
     test: /\.css$/,
     include: /node_modules/,
     exclude: pathAlias.src,
     loaders: ['style-loader', 'css-loader'],
   },
-  ssr: {
-    test: /\.(css|scss)$/,
-    loader: 'css-loader/locals',
-  },
-  csr: { // load src styles
-    test: /\.(css|scss)$/,
-    exclude: /(node_modules)/,
+  {
+    test: /\.(sa|sc|c)ss$/,
+    exclude: /node_modules/,
     include: pathAlias.src,
     use: [
       'style-loader', // creates style nodes from JS strings
-      MiniCssExtractPlugin.loader, // minify and extract the required styles imports
+      {
+        loader: MiniCssExtractPlugin.loader, // minify and extract the required styles imports
+        options: {
+          sourceMap: env === 'development' ? 'eval-source-map' : 'eval', // true, none, eval, cheap-eval-source-map, cheap-module-eval-source-map, eval-source-map
+          // by default it uses publicPath in webpackOptions.output
+          //   publicPath: '/static/css/',
+          minimize: { discardComments: { removeAll: true } },
+          modules: true,
+        },
+      },
+      {
+        loader: 'css-modules-typescript-loader',
+      },
       {
         loader: 'css-loader', // translates CSS into CommonJS
         options: {
+          importLoaders: 3,
           minimize: true,
-          sourceMap: true,
+          import: true,
+          modules: true,
+        },
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          // parser: 'postcss-js',
+          // sourceMap: 'inline',
+        },
+      },
+      { loader: 'resolve-url-loader' },
+      { loader: 'sass-loader' },
+    ],
+  }
+];
+
+const cssLoaderServer = env => [
+  {
+    test: /\.(sa|sc|c)ss$/,
+    exclude: /node_modules/,
+    use: [
+      // 'style-loader',
+      // {
+      //   loader: MiniCssExtractPlugin.loader, // minify and extract the required styles imports
+      //   options: {
+      //     sourceMap: env === 'development' ? 'eval-source-map' : 'eval', // true, none, eval, cheap-eval-source-map, cheap-module-eval-source-map, eval-source-map
+      //     minimize: { discardComments: { removeAll: true } },
+      //   // by default it uses publicPath in webpackOptions.output
+      //   //   publicPath: '/static/css/',
+      //   },
+      // },
+      {
+        loader: 'css-modules-typescript-loader',
+      },
+      {
+        loader: 'css-loader', // translates CSS into CommonJS
+        options: {
+          importLoaders: 3,
+          onlyLocals: true,
+          import: true,
+          modules: true,
         },
       },
       {
         loader: 'postcss-loader',
       },
-      {
-        loader: 'resolve-url-loader',
-      },
-      {
-        loader: 'sass-loader',
-      },
+      { loader: 'resolve-url-loader' },
+      { loader: 'sass-loader' },
     ],
   },
-};
+];
 
 const mediaLoader = [
   {
@@ -86,20 +132,25 @@ const mediaLoader = [
   },
 ];
 
-const nodeRules = [
+const cssLoader = (env, renderType) => (renderType === 'ssr' ? cssLoaderServer(env) : cssLoaderClient(env));
+
+const nodeRules = (env, target) => [
   {
-    test: /\.(j|t)sx?$/,
+    test: /\.(js|jsx|ts|tsx)?$/,
     exclude: /node_modules/,
     use: [
       {
         loader: 'babel-loader',
+        options: {
+          // caller: { target },
+        },
       },
       {
         loader: "ts-loader"
       },
     ],
   },
-  { ...cssLoader.ssr },
+  ...cssLoader(env, 'ssr'),
   {
     test: /\.txt$/,
     use: 'raw-loader',
@@ -132,9 +183,9 @@ const nodeRules = [
   ...mediaLoader,
 ];
 
-const webRules = [
+const webRules = (env, target) => [
   {
-    test: /\.(j|t)sx?$/,
+    test: /\.(js|jsx|ts|tsx)?$/,
     exclude: /node_modules/,
     use: [
       {
@@ -142,14 +193,16 @@ const webRules = [
       },
       {
         loader: 'babel-loader',
+        options: {
+          // caller: { target },
+        },
       },
       {
         loader: "ts-loader"
       },
     ],
   },
-  { ...cssLoader.nodeModules },
-  { ...cssLoader.csr },
+  ...cssLoader(env, 'csr'),
   {
     test: /\.txt$/,
     use: 'raw-loader',
@@ -178,9 +231,9 @@ const webRules = [
   ...mediaLoader,
 ];
 
-const loaderRules = target => ([
-  ...target === 'node' ? nodeRules : webRules,
-]);
+const loaderRules = (target, env) => {
+  return (target === 'node' ? nodeRules(env, target) : webRules(env, target))
+};
 
 module.exports = {
   loaderRules,

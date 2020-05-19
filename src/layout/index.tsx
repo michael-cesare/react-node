@@ -1,19 +1,28 @@
-import React from "react";
+import React, { FC } from "react";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
+import styled from "styled-components";
 
-import PageBody from './PageBody';
+import theme from '../theme';
+import PageBody from './pageBody';
 import Header from './header';
 import Footer from './footer';
 
-class Layout extends React.Component {
-  render() {
-    return (
-      <div className="layout">
+const LayoutContainer = styled.div`
+  min-height:100vh;
+`;
+
+const Layout: FC<any> = ({ ...otherProps }) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <LayoutContainer>
         <Header />
         <PageBody />
         <Footer />
-      </div>
-    );
-  }
+      </LayoutContainer>
+    </ThemeProvider>
+  );
 }
 
 export default Layout;
