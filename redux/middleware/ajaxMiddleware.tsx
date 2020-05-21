@@ -1,5 +1,3 @@
-// import { SERVER } from '../../typings';
-
 // this is the client middleware, handles promisses to fetch data from API endpoints using Ajax.
 const ajaxMiddleware = (client) => {
   // next as in next command action to handle in the middleware, which generates a new state for reducer to handle
@@ -8,7 +6,7 @@ const ajaxMiddleware = (client) => {
       return action(dispatch, getState);
     }
 
-    // cannot fetch with AJAX on Server
+    // cannot fetch with AJAX on Server, use ClientAPI fetch directly
     if (SERVER) {
       return next(action);
     }

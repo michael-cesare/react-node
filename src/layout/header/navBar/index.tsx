@@ -31,7 +31,7 @@ const NavBar: FC<MenuType> = ({ menu, ...otherProps }) => {
             <Button
               size="small"
               color="secondary"
-              href={`${ssrUrl}${i.url}`} target="_blank">
+              href={`${ssrUrl}${i.url}`}>
               {i.name}
             </Button>
           </React.Fragment>

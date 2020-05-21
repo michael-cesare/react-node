@@ -12,7 +12,7 @@ const { loaderRules } = require('./loaderRules');
 const {
   APP_ENV, SITE_HOST, SITE_PORT,
   LOG_LEVEL, API_BASE_URL, BASE_URL,
-  SERVER,
+  SERVER, SQLITESOURCE,
 } = require('./envReader');
 
 
@@ -92,6 +92,7 @@ const varDefinePlugin = new webpack.DefinePlugin({
   SITE_PORT: JSON.stringify(SITE_PORT),
   LOG_LEVEL: JSON.stringify(LOG_LEVEL),
   API_BASE_URL: JSON.stringify(API_BASE_URL),
+  SQLITESOURCE: JSON.stringify(SQLITESOURCE),
   BASE_URL: JSON.stringify(BASE_URL),
   SERVER: JSON.stringify(SERVER),
 });

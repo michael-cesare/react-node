@@ -18,6 +18,7 @@ module.exports = {
     mode,
     SERVER: process.env.SERVER,
     API_BASE_URL: process.env.API_BASE_URL,
+    SQLITESOURCE: process.env.SQLITESOURCE,
     BASE_URL: process.env.BASE_URL,
     SITE_HOST: process.env.SITE_HOST,
     SITE_PORT: process.env.SITE_PORT,

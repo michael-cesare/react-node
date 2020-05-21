@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import { Promise } from 'es6-promise';
 
+import { tokenGetter } from './AuthToken';
 import logger from './logger';
 
 // alternative: import axios from 'axios'
@@ -11,7 +12,7 @@ const acceptHeader = 'Accept';
 const contentTypeHeader = 'Content-Type';
 const authHeader = 'Authorization';
 const contentType = 'application/json';
-
+const FormContentType = 'application/x-www-form-urlencoded;charset=UTF-8';
 
 const formatUrl = (path) => {
   const adjustedPath = path[0] !== '/' ? '/'.concat(path) : path;
@@ -73,12 +74,16 @@ class ApiClient {
       this.baseUrl = windowUrl.protocol.concat('//', windowUrl.host);
     } else {
       this.baseUrl = baseUrl;
+      this.userToken = tokenGetter();
     }
 
     methods.forEach((method) => {
       this[method] = (path, { params, data, options } = {}) => new Promise((resolve, reject) => {
         const adjustedPath = formatUrl(path);
         let url = this.baseUrl + adjustedPath;
+        logger.debug(`[ApiClient] baseUrl:${this.baseUrl}, path:${path}, adjustedPath:${adjustedPath}, url:${url}`);
+
+        const isGET = method === 'get' ? contentType : FormContentType;
 
         const init = {
           method,
@@ -87,11 +92,9 @@ class ApiClient {
           },
         };
 
-        // if ((options && options.secure)
-        //   && token) {
-        //   // JWT Authentication throws cors issue when hosting PHP wordpress on ISS, but not on XAMPP ??
-        //   init.headers[authHeader] = 'Bearer '.concat(token);
-        // }
+        if (this.userToken) {
+          init.headers[authHeader] = 'Bearer '.concat(this.userToken);
+        }
 
         if (options && options.noCors) {
           init.mode = 'no-cors';
@@ -102,8 +105,9 @@ class ApiClient {
         }
 
         if (data) {
-          if (data instanceof FormData) {
+          if (data instanceof FormData || !isGET) {
             init.body = data;
+            // init.headers[contentTypeHeader] = FormContentType;
           } else {
             init.body = JSON.stringify(data);
             init.headers[contentTypeHeader] = contentType;
@@ -123,7 +127,7 @@ class ApiClient {
                 reject(body);
               });
             } else if (error && error.message) {
-                logger.debug(`[ApiClient][ERROR]: url ${url}`);
+              logger.debug(`[ApiClient][ERROR]: url ${url}`);
               reject(error.message);
             } else {
               reject(error);

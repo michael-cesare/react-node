@@ -1,7 +1,25 @@
 # react-node
-An Example of integrating React with Node using features of react, react-router, react-redux, node, express, code splitting, lazy loading, loadable components, babel and webpack. The main focus is to optimize webpack, and to have a scale-able solution.
 
-purpose of this repository is to deal with issues that where faced during my past work experienced, And knowlagde to the public.
+instructions:
 
 
-Read more on specific areas/Library by visiting links from reference.txt
+1. clone and setup repo.
+1.1 clone repo from github.
+1.2 run 'npm install'
+1.3 run 'npm run build'
+
+2. set Sqlite
+2.1 downlaod sqlite3 from https://sqlitebrowser.org/
+2.2 create sqlite db
+2.3 change .env value to location of sqlite db.
+
+3. run server app
+3.1 run 'npm run start'
+3.2 hit endpoint '/set/db' to reset database
+3.3 the following users are created; username:admin password:admin123, username:gambler password:gambler123, username:sales2 password:sales123 ', 
+3.4 you can add more users in the script file : .\server\repositories\userRepo.tsx
+
+
+
+
+

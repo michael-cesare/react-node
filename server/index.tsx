@@ -1,11 +1,13 @@
 import express from 'express';
 import http from 'http';
 import open from 'open';
-
+import bodyParser from 'body-parser';
 import envReader from '../envReader';
 import errorHandler from './middleware/errorHandler';
 import ping from './controllerRoutes/pingRoute';
 import mainRouter from './controllerRoutes/mainRouter';
+import migrationRouter from './controllerRoutes/migrationRouter';
+import userRouter from './controllerRoutes/userRouter';
 import logger from '../util/logger';
 
 const host = envReader.SITE_HOST;
@@ -20,7 +22,14 @@ app.use('/src', express.static('build/client'));
 app.use('/build', express.static('build'));
 app.use(express.static('build/server'));
 
+// parse application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
 app.use(ping);
+app.use(userRouter);
+app.use(migrationRouter);
 app.use(mainRouter);
 // ---- errorHandler for 404 ----
 app.use((err: any, req: any, res: any, next: any) => {

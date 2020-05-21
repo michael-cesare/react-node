@@ -1,10 +1,11 @@
 import { combineReducers } from 'redux-immutable';
 import { routerReducer } from 'react-router-redux';
 
+import user from './userReducer';
 
-// checkout .......\DhaliaFE\util\reduxUtil.js
 const rootReducer = combineReducers({
   routing: routerReducer,
+  user,
 });
 
 export default rootReducer;

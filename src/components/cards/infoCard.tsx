@@ -42,10 +42,6 @@ const InfoCard: FC<InfoCardType> = ({ slug, media, navUrl, ...otherProps }) => {
     <React.Fragment key={slug}>
       <Card>
         <ButtonBase className={classes.image}>
-          {/* <CardMedia className={classes.cardMedia}
-            image={media.url}
-            title={media.title}
-          /> */}
           <img
             className={classes.img}
             alt={media.title}
