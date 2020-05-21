@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-// const LoadablePlugin = require('@loadable/webpack-plugin');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CrudeTimingPlugin = require('./webpackFiles/crudeTimingPlugin');
 const { loaderRules } = require('./loaderRules');
@@ -24,6 +24,11 @@ const pathAlias = {
 
 const webEntry = { ReactApp: [path.join(pathAlias.srcClientDir , 'index.tsx')] };
 const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'index.tsx')] };
+// To use nodeEntry:
+// either 1) use ChunkExtractor only for web, and host on http/express server in node. then use react directly. (this is current solution)
+// or 2) replace/uncomment to use the below and set nodeExtractor for 'serverIndex.tsx', and also need to host express on webpackdevserver.
+// const nodeEntry = { NodeApp: [path.join(pathAlias.srcServerDir , 'serverIndex.tsx')] };
+// option 2 also requires to adjust webpack externals and nodePlugins
 
 const terserMinify = env => new TerserPlugin({
   cache: true,
@@ -45,7 +50,7 @@ const terserMinify = env => new TerserPlugin({
       inline: 2,
       passes: 3,
     },
-    module: false,
+    module: true,
     mangle: {
       safari10: true,
       ie8: true,
@@ -66,6 +71,7 @@ const getOutput = target => ({
   publicPath: target === 'node' ? path.join(pathAlias.buildDir, 'server') : path.join('src'), // used by webpackdevserver or express
   filename: '[name].js',
   chunkFilename: 'js/[name]-[hash].js',
+  // libraryTarget: target === 'node' ? 'commonjs2' : undefined,
 });
 
 const HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -96,11 +102,12 @@ const varDefinePlugin = new webpack.DefinePlugin({
 
 const nodePlugins = env => [
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
-  new webpack.ProvidePlugin({
-    "React": "react",
-  }),
+  // new webpack.ProvidePlugin({
+  //   "React": "react",
+  // }),
   varDefinePlugin,
   // new LoadablePlugin(),
+  // MiniCssExtractPluginConfig,
 ];
 
 const webPlugins = env => [
@@ -109,7 +116,7 @@ const webPlugins = env => [
   varDefinePlugin,
   // env === 'development' ? new BundleAnalyzerPlugin() : {},
   env === 'development' ? new CrudeTimingPlugin() : () => {},
-  // new LoadablePlugin(),
+  new LoadablePlugin(),
   HTMLWebpackPluginConfig,
   MiniCssExtractPluginConfig,
 ];
@@ -182,16 +189,16 @@ const webpackConfigs = (mode, target, env) => ({
   target,
   mode,
   externals: target === 'node' ? [
-    // when the below is removed, it will break because in  .\server\viewTemplates\layoutSSR.js  it has import of layout component
+    // '@loadable/component',
     nodeExternals({
       whitelist: [
         // /^@loadable\/component$/,
-        /^react$/,
-        /^react-dom$/,
-        /^core-js$/,
-        /^commonjs$/,
-        /^lodash$/,
-        /^lodash.debounce$/,
+        // /^react$/,
+        // /^react-dom$/,
+        // /^core-js$/,
+        // /^commonjs$/,
+        // /^lodash$/,
+        // /^lodash.debounce$/,
       ],
     }),
   ] : {
@@ -205,20 +212,17 @@ const webpackConfigs = (mode, target, env) => ({
     fs: 'empty', // dont use fs on browser.. use only by node.
   } : {},
   devtool: env === 'development' ? 'cheap-source-map' : 'eval',  // 'cheap-source-map', 'eval', 'eval-source-map'
-  resolve: target === 'web' ? {
-    modules: [
+  resolve: {
+    modules: target === 'web' ? [
       path.resolve(pathAlias.srcClientDir),
       'node_modules',
+    ] : [
+      path.resolve(pathAlias.srcServerDir),
     ],
-    // alias: {
-    //   'react-dom': '@hot-loader/react-dom',
-    // },
-    extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
-  } : {
     extensions: [".ts", ".tsx", '.js', '.jsx', '.json']
   },
   plugins: target === 'node' ? nodePlugins(env) : webPlugins(env),
-  optimization: getOptimization(target, env),
+  // optimization: getOptimization(target, env),
 });
 
 module.exports = {

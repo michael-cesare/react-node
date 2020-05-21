@@ -18,14 +18,24 @@ const cssLoader = {
   },
   ssr: {
     test: /\.(css|scss)$/,
-    loader: 'css-loader/locals',
+    use: [
+      MiniCssExtractPlugin.loader,
+      {
+        loader: 'css-loader', // translates CSS into CommonJS
+        options: {
+          onlyLocals: true,
+          // import: true,
+          // modules: true,
+        },
+      },
+    ],
   },
   csr: { // load src styles
     test: /\.(css|scss)$/,
     exclude: /(node_modules)/,
     include: pathAlias.src,
     use: [
-      'style-loader', // creates style nodes from JS strings
+      // 'style-loader', // creates style nodes from JS strings
       MiniCssExtractPlugin.loader, // minify and extract the required styles imports
       {
         loader: 'css-loader', // translates CSS into CommonJS
@@ -86,13 +96,16 @@ const mediaLoader = [
   },
 ];
 
-const nodeRules = [
+const nodeRules = (env, target) => [
   {
     test: /\.(j|t)sx?$/,
     exclude: /node_modules/,
     use: [
       {
         loader: 'babel-loader',
+        options: {
+          caller: { target },
+        },
       },
       {
         loader: "ts-loader"
@@ -132,16 +145,19 @@ const nodeRules = [
   ...mediaLoader,
 ];
 
-const webRules = [
+const webRules = (env, target) => [
   {
     test: /\.(j|t)sx?$/,
     exclude: /node_modules/,
     use: [
-      {
-        loader: 'react-hot-loader/webpack',
-      },
+      // {
+      //   loader: 'react-hot-loader/webpack',
+      // },
       {
         loader: 'babel-loader',
+        options: {
+          caller: { target },
+        },
       },
       {
         loader: "ts-loader"
@@ -178,8 +194,8 @@ const webRules = [
   ...mediaLoader,
 ];
 
-const loaderRules = target => ([
-  ...target === 'node' ? nodeRules : webRules,
+const loaderRules = (env, target) => ([
+  ...target === 'node' ? nodeRules(env, target) : webRules(env, target),
 ]);
 
 module.exports = {

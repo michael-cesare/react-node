@@ -1,7 +1,6 @@
 import express from 'express';
 
 import asyncMiddleware from '../middleware/asyncMiddleware';
-import { renderHtmlApp } from '../nodeViews/appHtml';
 import logger from '../../util/logger';
 
 const pingRouter = express.Router();
@@ -15,8 +14,7 @@ const pingRoute = async (req: any, res: any, next: any) => {
     next(err);
   });
 
-  const pingMsg = 'hello Node developer! Message from Ping';
-  const rtn = renderHtmlApp(pingMsg, {});
+  const rtn = 'hello Node developer! Message from Ping';
 
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write(rtn);

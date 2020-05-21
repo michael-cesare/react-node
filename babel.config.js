@@ -33,12 +33,12 @@ module.exports = api => {
     ],
     "plugins": [
       ["@babel/plugin-proposal-decorators", { "legacy": true }],
-      ["@babel/proposal-class-properties", { "loose": true }],
-      "@babel/proposal-object-rest-spread",
-      "@babel/syntax-dynamic-import",
-      "@babel/transform-runtime",
-      "@babel/transform-modules-commonjs",
-      // "@loadable/babel-plugin",
+      ["@babel/plugin-proposal-class-properties", { "loose": true }],
+      "@babel/plugin-proposal-object-rest-spread",
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-transform-runtime",
+      "@babel/plugin-transform-modules-commonjs",
+      "@loadable/babel-plugin",
     ],
     "env": {
       "development": {
